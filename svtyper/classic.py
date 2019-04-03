@@ -410,7 +410,16 @@ def sv_genotype(bam_string,
                 # write to BAM if requested
                 if alignment_outpath is not None and  write_fragment:
                     for read in fragment.primary_reads + [split.read for split in fragment.split_reads]:
-                        out_bam_written_reads = write_alignment(read, out_bam, out_bam_written_reads)
+                        # add caller_id for downstream analysis
+                        read.set_tag('VI', var.var_id)
+                        # only output those alt reads for downstream visualization, use try to skip those without XV tag
+                        try:
+                            xv = read.get_tag('XV')
+                        except KeyError:
+                            print("[WARNING] No XV tag for read {}".format(read.query_name))
+                            xv = "U"
+                        if xv == "A":
+                            out_bam_written_reads = write_alignment(read, out_bam, out_bam_written_reads)
 
             if debug:
                 print '--------------------------'

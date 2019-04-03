@@ -12,7 +12,7 @@ from svtyper.parsers import SamFragment, Vcf
 # write read to BAM file, checking whether read is already written
 def write_alignment(read, bam, written_reads, is_alt=None):
     read.query_sequence = None
-    read_hash = (read.query_name, read.flag)
+    read_hash = (read.query_name, read.flag, read.get_tag("VI"))
 
     if bam is None or read_hash in written_reads:
         return written_reads
